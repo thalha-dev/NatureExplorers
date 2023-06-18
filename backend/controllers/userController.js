@@ -104,6 +104,7 @@ const login = async (req, res, next) => {
         UserInfo: {
           username: user.username,
           roles: roles,
+          userId: user._id,
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
@@ -293,6 +294,7 @@ const refreshAccessToken = async (req, res, next) => {
             UserInfo: {
               username: decoded.username,
               roles: roles,
+              userId: user._id,
             },
           },
           process.env.ACCESS_TOKEN_SECRET,
