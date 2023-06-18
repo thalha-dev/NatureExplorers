@@ -3,7 +3,6 @@ const cors = require("cors");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const credentials = require("./middlewares/cors/credentials");
-const verifyJWT = require("./middlewares/auth/verifyJWT");
 const { isHttpError } = require("http-errors");
 const createHttpError = require("http-errors");
 const corsOptions = require("./config/corsOptions");
@@ -26,13 +25,12 @@ app.use(cookieParser());
 // routes
 
 app.use("/api/users", userRoutes);
-app.use(verifyJWT);
 app.use("/api/admin", adminRoutes);
 app.use("/api/articles", articleRoutes);
 
 // Endpoint Not Found
 
-app.all("*", (req, res, next) => {
+app.use((req, res, next) => {
   next(createHttpError(404, "Endpoint Not Found"));
 });
 

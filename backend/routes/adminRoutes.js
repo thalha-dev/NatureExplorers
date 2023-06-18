@@ -9,14 +9,39 @@ const {
   updateIndividualRoles,
   deleteIndividualAccount,
 } = require("../controllers/userController");
+
+const verifyJWT = require("../middlewares/auth/verifyJWT");
 const verifyRoles = require("../middlewares/auth/verifyRoles");
 
-router.use(verifyRoles(ROLES_LIST.Admin));
-
-router.get("/getAllUsers", getAllUsers);
-router.get("/getAllWriters", getAllWriters);
-router.get("/getAllIndividuals", getAllIndividuals);
-router.post("/updateIndividualRoles", updateIndividualRoles);
-router.post("/deleteIndividualAccount", deleteIndividualAccount);
+router.get(
+  "/getAllUsers",
+  verifyJWT,
+  verifyRoles(ROLES_LIST.Admin),
+  getAllUsers
+);
+router.get(
+  "/getAllWriters",
+  verifyJWT,
+  verifyRoles(ROLES_LIST.Admin),
+  getAllWriters
+);
+router.get(
+  "/getAllIndividuals",
+  verifyJWT,
+  verifyRoles(ROLES_LIST.Admin),
+  getAllIndividuals
+);
+router.post(
+  "/updateIndividualRoles",
+  verifyJWT,
+  verifyRoles(ROLES_LIST.Admin),
+  updateIndividualRoles
+);
+router.post(
+  "/deleteIndividualAccount",
+  verifyJWT,
+  verifyRoles(ROLES_LIST.Admin),
+  deleteIndividualAccount
+);
 
 module.exports = router;
