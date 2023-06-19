@@ -2,10 +2,14 @@ const createHttpError = require("http-errors");
 const UserModel = require("../models/User");
 const ArticleModel = require("../models/Article");
 const mongoose = require("mongoose");
+const fs = require("fs");
 
 const getArticles = async (req, res, next) => {
   try {
-    const articles = await ArticleModel.find().exec();
+    const articles = await ArticleModel.find()
+      .populate("writer", ["username"])
+      .sort({ createdAt: -1 })
+      .exec();
 
     if (!articles) {
       throw createHttpError(404, "No articles found");
@@ -28,7 +32,10 @@ const getWriterArticles = async (req, res, next) => {
       throw createHttpError(400, "Writer ID is not in correct format");
     }
 
-    const articles = await ArticleModel.find({ writerId: writerId }).exec();
+    const articles = await ArticleModel.find({ writer: writerId })
+      .populate("writer", ["username"])
+      .sort({ createdAt: -1 })
+      .exec();
 
     if (!articles) {
       throw createHttpError(404, "No articles found");
@@ -51,7 +58,9 @@ const getArticle = async (req, res, next) => {
       throw createHttpError(400, "Article ID is not in correct format");
     }
 
-    const article = await ArticleModel.findOne({ _id: articleId }).exec();
+    const article = await ArticleModel.findOne({ _id: articleId })
+      .populate("writer", ["username"])
+      .exec();
 
     if (!article) {
       throw createHttpError(404, "Article not found for the given ID");
@@ -65,7 +74,9 @@ const getArticle = async (req, res, next) => {
 
 const createArticle = async (req, res, next) => {
   const title = req.body.title;
+  const summary = req.body.summary;
   const content = req.body.content;
+  const imgFile = req.file;
   const writerId = req.body.writerId;
   try {
     if (!title) {
@@ -76,6 +87,14 @@ const createArticle = async (req, res, next) => {
       throw createHttpError(400, "Content is required");
     }
 
+    if (!summary) {
+      throw createHttpError(400, "Summary is required");
+    }
+
+    if (!imgFile) {
+      throw createHttpError(400, "Cover Images is required");
+    }
+
     if (!writerId) {
       throw createHttpError(400, "Writer ID is required");
     }
@@ -84,10 +103,18 @@ const createArticle = async (req, res, next) => {
       throw createHttpError(400, "Writer ID is not in correct format");
     }
 
+    const { originalname: originalFileName, path: imgPath } = imgFile;
+    const nameArray = originalFileName.split(".");
+    const extension = nameArray[nameArray.length - 1];
+    const imgPathWithExtension = imgPath + "." + extension;
+    fs.renameSync(imgPath, imgPathWithExtension);
+
     const newArticle = await ArticleModel.create({
       title: title,
+      summary: summary,
       content: content,
-      writerId: writerId,
+      coverImgURL: imgPathWithExtension,
+      writer: writerId,
     });
 
     res.status(200).json(newArticle);
@@ -98,10 +125,12 @@ const createArticle = async (req, res, next) => {
 
 const updateArticle = async (req, res, next) => {
   const title = req.body.title;
+  const summary = req.body.summary;
   const content = req.body.content;
+  const imgFile = req.file;
   const articleId = req.body.articleId;
   try {
-    if (!title && !content) {
+    if (!title && !content && !summary && !imgFile) {
       throw createHttpError(400, "Nothing to update");
     }
 
@@ -121,6 +150,14 @@ const updateArticle = async (req, res, next) => {
 
     if (req.body?.title) article.title = title;
     if (req.body?.content) article.content = content;
+    if (req?.file) {
+      const { originalname: originalFileName, path: imgPath } = imgFile;
+      const nameArray = originalFileName.split(".");
+      const extension = nameArray[nameArray.length - 1];
+      const imgPathWithExtension = imgPath + "." + extension;
+      fs.renameSync(imgPath, imgPathWithExtension);
+      article.coverImgURL = imgPathWithExtension;
+    }
 
     const updatedArticle = await article.save();
 
@@ -215,7 +252,10 @@ const getFavouriteAtricles = async (req, res, next) => {
 
     const favouriteArticles = await ArticleModel.find({
       _id: { $in: favouriteArticlesIds },
-    }).exec();
+    })
+      .populate("writer", ["username"])
+      .sort({ createdAt: -1 })
+      .exec();
 
     res.status(200).json(favouriteArticles);
   } catch (error) {

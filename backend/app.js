@@ -21,6 +21,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use("/images", express.static(__dirname + "/images"));
 
 // FOR TESTING
 // app.use((req, res, next) => {

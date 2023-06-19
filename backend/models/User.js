@@ -6,18 +6,21 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
 
     email: {
       type: String,
       required: true,
       unique: true,
+      trim: true,
       select: false,
     },
 
     password: {
       type: String,
       required: true,
+      trim: true,
       select: false,
     },
 
@@ -35,6 +38,7 @@ const userSchema = new mongoose.Schema(
 
     refreshToken: {
       type: String,
+      // trim: true,
     },
 
     favouriteArticles: [

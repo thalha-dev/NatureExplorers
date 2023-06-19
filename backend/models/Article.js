@@ -4,6 +4,13 @@ const articleSchema = new mongoose.Schema(
   {
     title: {
       type: String,
+      trim: true,
+      required: true,
+    },
+
+    summary: {
+      type: String,
+      trim: true,
       required: true,
     },
 
@@ -12,24 +19,25 @@ const articleSchema = new mongoose.Schema(
       required: true,
     },
 
-    writerId: {
+    writer: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    coverImgURL: {
+      type: String,
       required: true,
     },
 
     tags: [
       {
         type: String,
+        trim: true,
       },
     ],
   },
   { timestamps: true }
 );
-
-articleSchema.pre("save", function (next) {
-  this.title = this.title.trim();
-  this.content = this.content.trim();
-  next();
-});
 
 module.exports = mongoose.model("Article", articleSchema);

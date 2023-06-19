@@ -134,8 +134,8 @@ const login = async (req, res, next) => {
 };
 
 const logout = async (req, res, next) => {
+  const cookies = req.cookies;
   try {
-    const cookies = req.cookies;
     if (!cookies?.jwt) {
       throw createHttpError(404, "JWT cookie doesn't exist");
     }

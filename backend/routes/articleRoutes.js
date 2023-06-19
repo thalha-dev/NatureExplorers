@@ -1,5 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const path = require("path");
+const uploadMiddleware = multer({
+  dest: path.join(__dirname, "..", "images/"),
+});
 
 const {
   getArticles,
@@ -34,12 +39,14 @@ router.post(
   "/createArticle",
   verifyJWT,
   verifyRoles(ROLES_LIST.Writer, ROLES_LIST.Admin),
+  uploadMiddleware.single("imgFile"),
   createArticle
 );
 router.post(
   "/updateArticle",
   verifyJWT,
   verifyRoles(ROLES_LIST.Writer, ROLES_LIST.Admin),
+  uploadMiddleware.single("imgFile"),
   updateArticle
 );
 router.post(
