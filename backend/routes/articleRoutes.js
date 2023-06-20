@@ -49,7 +49,7 @@ router.post(
   uploadMiddleware.single("imgFile"),
   updateArticle
 );
-router.post(
+router.delete(
   "/deleteArticle",
   verifyJWT,
   verifyRoles(ROLES_LIST.Writer, ROLES_LIST.Admin),
