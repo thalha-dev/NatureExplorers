@@ -220,10 +220,15 @@ const addFavouriteArticle = async (req, res, next) => {
       throw createHttpError(400, "Article ID already in the favourite list");
     }
 
+    const favArticle = await ArticleModel.findOne({ _id: articleId }).exec();
+    if (!favArticle) {
+      throw createHttpError(400, "No article found for the given ID");
+    }
+
     individual.favouriteArticles.push(articleId);
     await individual.save();
 
-    res.sendStatus(200);
+    res.status(200).json(favArticle);
   } catch (error) {
     next(error);
   }
