@@ -254,7 +254,7 @@ const deleteIndividualAccount = async (req, res, next) => {
     }).exec();
 
     const deletedArticles = await ArticleModel.deleteMany({
-      writerId: individualId,
+      writer: individualId,
     });
 
     res.status(204).json({
