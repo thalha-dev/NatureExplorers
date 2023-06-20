@@ -13,7 +13,7 @@ const {
   createArticle,
   updateArticle,
   deleteArticle,
-  getFavouriteAtricles,
+  getFavouriteArticles,
   addFavouriteArticle,
 } = require("../controllers/articleController");
 
@@ -24,9 +24,9 @@ const verifyJWT = require("../middlewares/auth/verifyJWT");
 router.get("/getArticles", verifyJWT, getArticles);
 router.get("/getArticle/:articleId", verifyJWT, getArticle);
 router.get(
-  "/getFavouriteAtricles/:individualId",
+  "/getFavouriteArticles/:individualId",
   verifyJWT,
-  getFavouriteAtricles
+  getFavouriteArticles
 );
 router.post("/addFavouriteArticle", verifyJWT, addFavouriteArticle);
 router.get(

@@ -229,7 +229,7 @@ const addFavouriteArticle = async (req, res, next) => {
   }
 };
 
-const getFavouriteAtricles = async (req, res, next) => {
+const getFavouriteArticles = async (req, res, next) => {
   const individualId = req.params.individualId;
   try {
     if (!individualId) {
@@ -270,6 +270,6 @@ module.exports = {
   createArticle,
   updateArticle,
   deleteArticle,
-  getFavouriteAtricles,
+  getFavouriteArticles,
   addFavouriteArticle,
 };
