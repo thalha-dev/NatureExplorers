@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const uploadMiddleware = multer({
-  dest: path.join(__dirname, "..", "images/"),
+  dest: "images/",
 });
 
 const {
