@@ -234,6 +234,43 @@ const addFavouriteArticle = async (req, res, next) => {
   }
 };
 
+const removeFavouriteArticle = async (req, res, next) => {
+  const individualId = req.body.individualId;
+  const articleId = req.body.articleId;
+  try {
+    if (!individualId) {
+      throw createHttpError(400, "Individual ID is missing");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(individualId)) {
+      throw createHttpError(400, "Individual ID is not in correct format");
+    }
+
+    if (!articleId) {
+      throw createHttpError(400, "Article ID is missing");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(articleId)) {
+      throw createHttpError(400, "Article ID is not in correct format");
+    }
+
+    const individual = await UserModel.findOne({ _id: individualId }).exec();
+
+    if (!individual.favouriteArticles.includes(articleId)) {
+      throw createHttpError(400, "Article not in favourite list");
+    }
+
+    await UserModel.updateOne(
+      { _id: individualId },
+      { $pull: { favouriteArticles: articleId } }
+    );
+
+    res.status(200).json({ articleId });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getFavouriteArticles = async (req, res, next) => {
   const individualId = req.params.individualId;
   try {
@@ -276,5 +313,6 @@ module.exports = {
   updateArticle,
   deleteArticle,
   getFavouriteArticles,
+  removeFavouriteArticle,
   addFavouriteArticle,
 };

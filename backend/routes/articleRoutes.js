@@ -15,6 +15,7 @@ const {
   deleteArticle,
   getFavouriteArticles,
   addFavouriteArticle,
+  removeFavouriteArticle,
 } = require("../controllers/articleController");
 
 const verifyRoles = require("../middlewares/auth/verifyRoles");
@@ -29,6 +30,7 @@ router.get(
   getFavouriteArticles
 );
 router.post("/addFavouriteArticle", verifyJWT, addFavouriteArticle);
+router.post("/removeFavouriteArticle", verifyJWT, removeFavouriteArticle);
 router.get(
   "/getWriterArticles/:writerId",
   verifyJWT,
