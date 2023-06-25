@@ -3,6 +3,7 @@ const UserModel = require("../models/User");
 const ArticleModel = require("../models/Article");
 const mongoose = require("mongoose");
 const fs = require("fs");
+const path = require("path");
 
 const getArticles = async (req, res, next) => {
   try {
@@ -185,6 +186,13 @@ const deleteArticle = async (req, res, next) => {
     if (!deletedArticle) {
       throw createHttpError(404, "Article Not Found");
     }
+
+    const imagePath = path.join(__dirname, "..", deletedArticle.coverImgURL);
+    fs.unlink(imagePath, (error) => {
+      if (error) {
+        console.error("Error deleting image file:", error);
+      }
+    });
 
     await UserModel.updateMany({}, { $pull: { favouriteArticles: articleId } });
 
