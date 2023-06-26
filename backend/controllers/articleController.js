@@ -118,7 +118,9 @@ const createArticle = async (req, res, next) => {
       writer: writerId,
     });
 
-    res.status(200).json(newArticle);
+    const populatedArticle = await newArticle.populate("writer", ["username"]);
+
+    res.status(200).json(populatedArticle);
   } catch (error) {
     next(error);
   }
@@ -143,20 +145,32 @@ const updateArticle = async (req, res, next) => {
       throw createHttpError(400, "Article ID is not in correct format");
     }
 
-    const article = await ArticleModel.findOne({ _id: articleId }).exec();
+    const article = await ArticleModel.findOne({ _id: articleId })
+      .populate("writer", ["username"])
+      .exec();
 
     if (!article) {
       throw createHttpError(404, "Article Not Found");
     }
 
     if (req.body?.title) article.title = title;
+    if (req.body?.summary) article.summary = summary;
     if (req.body?.content) article.content = content;
     if (req?.file) {
+      const oldImagePath = path.join(__dirname, "..", article.coverImgURL);
+      fs.unlink(oldImagePath, (error) => {
+        if (error) {
+          console.error("Error deleting image file:", error);
+        }
+      });
+
       const { originalname: originalFileName, path: imgPath } = imgFile;
       const nameArray = originalFileName.split(".");
       const extension = nameArray[nameArray.length - 1];
       const imgPathWithExtension = imgPath + "." + extension;
+
       fs.renameSync(imgPath, imgPathWithExtension);
+
       article.coverImgURL = imgPathWithExtension;
     }
 
@@ -228,7 +242,10 @@ const addFavouriteArticle = async (req, res, next) => {
       throw createHttpError(400, "Article ID already in the favourite list");
     }
 
-    const favArticle = await ArticleModel.findOne({ _id: articleId }).exec();
+    const favArticle = await ArticleModel.findOne({ _id: articleId })
+      .populate("writer", ["username"])
+      .exec();
+
     if (!favArticle) {
       throw createHttpError(400, "No article found for the given ID");
     }
