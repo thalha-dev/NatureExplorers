@@ -249,18 +249,15 @@ const deleteIndividualAccount = async (req, res, next) => {
       throw createHttpError(400, "Individual ID is not in correct format");
     }
 
-    const deletedIndividual = await UserModel.findOneAndDelete({
+    await UserModel.findOneAndDelete({
       _id: individualId,
     }).exec();
 
-    const deletedArticles = await ArticleModel.deleteMany({
+    await ArticleModel.deleteMany({
       writer: individualId,
     });
 
-    res.status(204).json({
-      deletedIndividual,
-      deletedArticlesCount: deletedArticles.deletedCount,
-    });
+    res.status(200).json({ individualId });
   } catch (error) {
     next(error);
   }

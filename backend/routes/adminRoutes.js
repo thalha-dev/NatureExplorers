@@ -37,7 +37,7 @@ router.post(
   verifyRoles(ROLES_LIST.Admin),
   updateIndividualRoles
 );
-router.post(
+router.delete(
   "/deleteIndividualAccount",
   verifyJWT,
   verifyRoles(ROLES_LIST.Admin),
