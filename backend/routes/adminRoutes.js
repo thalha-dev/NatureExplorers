@@ -31,7 +31,7 @@ router.get(
   verifyRoles(ROLES_LIST.Admin),
   getAllIndividuals
 );
-router.post(
+router.put(
   "/updateIndividualRoles",
   verifyJWT,
   verifyRoles(ROLES_LIST.Admin),
