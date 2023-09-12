@@ -25,7 +25,7 @@ const signup = async (req, res, next) => {
     if (existingUsername) {
       throw createHttpError(
         409,
-        "Username already exist. Please choose another one or login instead"
+        "Username already exist. Please choose another one or login instead",
       );
     }
 
@@ -36,7 +36,7 @@ const signup = async (req, res, next) => {
     if (existingEmail) {
       throw createHttpError(
         409,
-        "Email already exist. Please choose another one or login instead"
+        "Email already exist. Please choose another one or login instead",
       );
     }
 
@@ -91,7 +91,7 @@ const login = async (req, res, next) => {
       throw createHttpError(401, "User doesn't exist. Signup instead.");
     }
 
-    const passwordMatch = bcrypt.compare(passwodRaw, user.password);
+    const passwordMatch = await bcrypt.compare(passwodRaw, user.password);
 
     if (!passwordMatch) {
       throw createHttpError(401, "Invalid Credentials");
@@ -108,13 +108,13 @@ const login = async (req, res, next) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "60s" }
+      { expiresIn: "60s" },
     );
 
     const refreshToken = jwt.sign(
       { username: user.username },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     user.refreshToken = refreshToken;
@@ -295,10 +295,10 @@ const refreshAccessToken = async (req, res, next) => {
             },
           },
           process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: "60s" }
+          { expiresIn: "60s" },
         );
         res.status(200).json({ accessToken });
-      }
+      },
     );
   } catch (error) {
     next(error);
