@@ -85,7 +85,7 @@ export const updateIndividualRoles = createAsyncThunk(
         try {
           await dispatch(refreshAccessTokenSubsequent());
 
-          const response = await api.get(
+          const response = await api.put(
             "/api/admin/updateIndividualRoles",
             {
               individualId: params.individualId,
